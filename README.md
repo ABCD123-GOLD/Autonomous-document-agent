@@ -1,38 +1,50 @@
-# Production RAG API
+# Autonomous Document Agent (RAG Engine)
 
 ### Ask Any Document. Get Cited Answers.
 
-This is a production-grade RAG (Retrieval-Augmented Generation) API built with FastAPI, Supabase, and Gemini Flash. It allows you to upload PDF documents and ask questions via a REST API or a Telegram Bot, receiving answers grounded exclusively in your documents with exact source citations.
+---
+
+## 🌟 The Vision: Why This Exists
+> *"When the purpose of a thing is not known, abuse is inevitable."*
+
+In the age of AI, many use LLMs as simple toys or search engines. But for businesses, legal teams, and researchers, "guessing" isn't enough. I built this **Autonomous Document Agent** to transform AI from an unpredictable chat-partner into a **dependable knowledge engine**. 
+
+The goal is to provide a system where **truth is verifiable**, **privacy is absolute**, and **scale is unlimited**. This isn't just a chatbot; it's an automated auditor for your private knowledge.
 
 ---
 
-## 🚀 Why Use This RAG API?
+## 🚀 Why RAG Over Raw AI?
 
-Using a custom RAG architecture is significantly more powerful than simply chatting with a standard AI (like Claude or ChatGPT) for several reasons:
+Using a custom RAG (Retrieval-Augmented Generation) architecture solves the three biggest problems with standard AI:
 
-1.  **Unlimited Scale**: Standard AI has a limited "context window." You can't paste 1,000 PDFs into a chat box. This system can handle millions of pages by only retrieving the most relevant snippets for each question.
-2.  **Zero Hallucinations**: By using "Grounding," we force the AI to only use the provided document context. If the answer isn't in your files, the AI will say "I don't know" instead of making something up.
-3.  **Verifiable Citations**: Every answer comes with exact source citations (e.g., "Document A, Page 5"). This is critical for legal, technical, or business use cases where accuracy is non-negotiable.
-4.  **Data Privacy & Ownership**: Your sensitive business data isn't just uploaded to a public chat. It is stored in your private Supabase database, giving you full control over data residency and security.
-5.  **Seamless Automation**: Because this is an API, it can be plugged into Telegram, Slack, or your company website to provide 24/7 automated support based on your internal knowledge.
-
----
-
-## 🛠️ Technical Stack
-
-- **Backend**: FastAPI (Python 3.11)
-- **Database**: Supabase + pgvector (Vector Storage)
-- **LLM**: Gemini Flash (Reasoning & Generation)
-- **Embeddings**: OpenAI `text-embedding-3-small`
-- **Interface**: Telegram Bot + REST API (Swagger)
-- **Deployment**: Docker + Railway
+1.  **Unlimited Knowledge Scale**: You can't paste 1,000 PDFs into ChatGPT. This engine uses **Vector Search** to scan millions of pages and only retrieve the specific context needed for your question.
+2.  **Verifiable Truth (Citations)**: Every answer includes **inline citations** (e.g., `[Page 4]`) and a list of **Official Sources**. You never have to "trust" the AI; you can verify it.
+3.  **Zero Hallucinations**: By using strict **Grounding Rules**, the AI is forbidden from using its "imagination." If the answer isn't in your documents, it won't make one up.
+4.  **Absolute Privacy**: Your documents aren't fed into a public model training set. They stay in your private **Supabase pgvector** database.
 
 ---
 
-## 📦 Setup & Installation
+## 🛠️ Technical Stack (The "Brain")
 
-1.  **Clone the repository**
-2.  **Install dependencies**: `pip install .`
-3.  **Configure Environment**: Copy `.env.example` to `.env` and fill in your keys.
-4.  **Initialize Database**: Run the SQL script provided in the documentation in your Supabase SQL Editor.
-5.  **Run the app**: `uvicorn app.main:app --reload`
+- **Backend**: FastAPI (Python 3.11) — Production-grade REST API.
+- **Reasoning Engine**: OpenAI **GPT-4o** — High-intelligence reasoning and synthesis.
+- **Vector Storage**: **Supabase + pgvector** — High-performance semantic retrieval.
+- **Interface**: **Telegram Bot** — Drop a PDF and chat instantly from your phone.
+- **Architecture**: **RBI Pattern** (Rules, Brain, Implementation) for maximum reliability.
+
+---
+
+## 📦 Getting Started
+
+1.  **Configure Environment**: Copy `.env.example` to `.env` and add your OpenAI, Supabase, and Telegram keys.
+2.  **Initialize Database**: Run the provided SQL script in your Supabase SQL Editor to enable `pgvector` and the `match_documents` function.
+3.  **Install Dependencies**: `pip install .`
+4.  **Launch the Agent**:
+    - **API**: `uvicorn app.main:app --reload`
+    - **Telegram Bot**: `python -m app.telegram_bot`
+
+---
+
+## 👨‍💻 Built By
+**Wuraola Mathew Oladayo**  
+*Agentic AI Engineer — Specializing in autonomous, reliable AI systems.*
