@@ -6,15 +6,32 @@
 
 ---
 
-## How It Works
+## System Architecture
 
-The system operates on two separate data flows, each with a single responsibility:
-
-**Ingestion** — A PDF is uploaded, its text is extracted page-by-page, split into overlapping 500-token chunks for retrieval accuracy, and each chunk is converted into a 1536-dimensional vector using OpenAI `text-embedding-3-small`. The vectors are stored in Supabase pgvector alongside the raw text, page numbers, and source metadata.
-
-**Query** — A natural language question is embedded into the same vector space, and cosine similarity search retrieves the top-k most relevant chunks. These chunks are injected into a strict system prompt that forbids the LLM from using any external knowledge. The model generates an answer citing `[Page X]` or `[Fragment X]` for every claim, and the response includes a structured source list for full traceability.
-
-**Key constraint:** The LLM is configured at `temperature=0.1` with explicit grounding rules. It cannot speculate. It cannot improvise. If the retrieved context does not contain the answer, the system returns a transparent "not found" response rather than a confident hallucination.
+```mermaid
+flowchart TD
+    User([User / Telegram]) <--> API[FastAPI / Telegram Bot]
+    
+    subgraph Ingestion [Ingestion Pipeline]
+        PDF[PDF Upload] --> Extract[Text Extraction]
+        Extract --> Chunk[Overlap Chunking]
+        Chunk --> Embed_I[OpenAI Embedding]
+        Embed_I --> DB[(Supabase pgvector)]
+    end
+    
+    subgraph Retrieval [Retrieval & Generation]
+        Ask[User Question] --> Embed_Q[OpenAI Embedding]
+        Embed_Q --> Search[Vector Similarity Search]
+        DB --> Search
+        Search --> Context[Relevant Context]
+        Context --> LLM[GPT-4o Grounded Prompt]
+        LLM --> Answer[Cited Response]
+    end
+    
+    API --> PDF
+    API --> Ask
+    Answer --> API
+```
 
 ---
 
@@ -44,30 +61,6 @@ The system operates on two separate data flows, each with a single responsibilit
 | Containerization | Docker (`python:3.11-slim`) | Reproducible builds for any deployment target |
 | CI/CD | GitHub Actions | Automated test + deploy pipeline on push to `main` |
 | Hosting | Railway | Live HTTPS endpoint with environment-based configuration |
-
----
-
-## Project Structure
-
-```
-app/
-  main.py              # FastAPI app, middleware, API key auth
-  config.py            # Environment-based settings via pydantic-settings
-  prompts.py           # Grounding rules and citation-enforcement prompts
-  telegram_bot.py      # Telegram interface for document upload and Q&A
-  routes/
-    ingest.py          # POST /ingest — PDF upload and vectorization
-    ask.py             # POST /ask — Question answering with citations
-    health.py          # GET /health — Deployment health check
-  services/
-    pdf_extractor.py   # PyPDF2 wrapper for page-by-page extraction
-    chunker.py         # Token-aware text splitting with overlap
-    embedder.py        # OpenAI embedding generation (single + batch)
-    vector_store.py    # Supabase pgvector insert and similarity search
-    llm.py             # GPT-4o-mini integration with grounded prompting
-  models/
-    schemas.py         # Pydantic request/response models
-```
 
 ---
 
